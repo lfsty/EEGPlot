@@ -31,54 +31,10 @@ void EEGPlot::paintGL()
     painter.setFont(m_ticket_font);
 
     painter.beginNativePainting();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glColor3f(0.0, 0.0, 0.0);
-    for(int i = 0; i < m_chNum; i++)
-    {
-        for(int j = 0; j < m_data.getSize() - 1; j++)
-        {
-            glLineWidth(1);
-            glBegin(GL_LINES);//画线
-            glVertex2d(j * m_phy_xRatio + m_paint_rect.left(), m_data.getChYData(i, j)*m_phy_dataRatio + m_phy_chDataBias + m_phy_singleChHeight * i + m_paint_rect.top()); //开始点(x,y)
-            glVertex2d((j + 1)*m_phy_xRatio + m_paint_rect.left(), m_data.getChYData(i, j + 1)*m_phy_dataRatio + m_phy_chDataBias + m_phy_singleChHeight * i + m_paint_rect.top()); //结束点 (x,y)
-            glEnd();
-        }
-    }
+    f_GLPaintData();
     painter.endNativePainting();
 
-    if(m_dispMode == DispMode::Cycle)
-    {
-        //垂直线
-        glLineWidth(5);
-        glBegin(GL_LINES);//画线
-        glVertex2d(m_data.getCurrentIndex()*m_phy_xRatio + m_paint_rect.left(), m_paint_rect.top()); //开始点(x,y)
-        glVertex2d(m_data.getCurrentIndex()*m_phy_xRatio + m_paint_rect.left(), m_paint_rect.bottom()); //结束点 (x,y)
-        glEnd();
-    }
-
-    //paint_rect
-    painter.drawRect(m_paint_rect);
-
-    // ytickets
-    for(int i = 0; i < m_chTickets.size(); i++)
-    {
-        painter.drawText(QRectF(0, i * m_phy_singleChHeight, m_margin.left, m_phy_singleChHeight), Qt::AlignHCenter | Qt::AlignVCenter, m_chTickets[i]);
-    }
-
-    // xtickets
-    for(int i = 0; i < m_data.getSize() - 1; i++)
-    {
-        int _ms = m_data.getChXData(i) * 1000;
-        if(_ms % 1000 == 0)
-        {
-            QString _tmp_x_ticket = f_getXTicket(_ms / 1000);
-            QRectF _tmp_ticket_rect = m_font_metrics.boundingRect(_tmp_x_ticket);
-            QRectF _paint_ticket_rect(i * m_phy_xRatio + m_paint_rect.left() - (_tmp_ticket_rect.width() / 2), m_paint_rect.bottom(), _tmp_ticket_rect.width(), _tmp_ticket_rect.height());
-            painter.drawText(_paint_ticket_rect, Qt::AlignHCenter | Qt::AlignVCenter, _tmp_x_ticket);
-        }
-    }
-
+    f_painterFrame(&painter);
 
     f_calFPS();
     this->update();
@@ -205,6 +161,57 @@ void EEGPlot::setChTickets(const QStringList& ch_tickets)
     else
     {
         qDebug() << "set chNum first";
+    }
+}
+
+void EEGPlot::f_GLPaintData()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glColor3f(0.0, 0.0, 0.0);
+    for(int i = 0; i < m_chNum; i++)
+    {
+        glLineWidth(1);
+        glBegin(GL_LINE_STRIP);//画线
+        for(int j = 0; j < m_data.getSize(); j++)
+        {
+            glVertex2d(j * m_phy_xRatio + m_paint_rect.left(), m_data.getChYData(i, j)*m_phy_dataRatio + m_phy_chDataBias + m_phy_singleChHeight * i + m_paint_rect.top());
+        }
+        glEnd();
+    }
+    if(m_dispMode == DispMode::Cycle)
+    {
+        //垂直线
+        glLineWidth(5);
+        glBegin(GL_LINES);//画线
+        glVertex2d(m_data.getCurrentIndex()*m_phy_xRatio + m_paint_rect.left(), m_paint_rect.top()); //开始点(x,y)
+        glVertex2d(m_data.getCurrentIndex()*m_phy_xRatio + m_paint_rect.left(), m_paint_rect.bottom()); //结束点 (x,y)
+        glEnd();
+    }
+}
+
+void EEGPlot::f_painterFrame(QPainter* painter)
+{
+    //paint_rect
+    painter->drawRect(m_paint_rect);
+
+    // ytickets
+    for(int i = 0; i < m_chTickets.size(); i++)
+    {
+        painter->drawText(QRectF(0, i * m_phy_singleChHeight, m_margin.left, m_phy_singleChHeight), Qt::AlignHCenter | Qt::AlignVCenter, m_chTickets[i]);
+    }
+
+    // xtickets
+    for(int i = 0; i < m_data.getSize() - 1; i++)
+    {
+        int _ms = m_data.getChXData(i) * 1000;
+        if(_ms % 1000 == 0)
+        {
+            QString _tmp_x_ticket = f_getXTicket(_ms / 1000);
+            QRectF _tmp_ticket_rect = m_font_metrics.boundingRect(_tmp_x_ticket);
+            QRectF _paint_ticket_rect(i * m_phy_xRatio + m_paint_rect.left() - (_tmp_ticket_rect.width() / 2), m_paint_rect.bottom(), _tmp_ticket_rect.width(), _tmp_ticket_rect.height());
+            painter->drawText(_paint_ticket_rect, Qt::AlignHCenter | Qt::AlignVCenter, _tmp_x_ticket);
+        }
     }
 }
 

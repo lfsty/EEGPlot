@@ -94,7 +94,8 @@ private:
     QRectF m_paint_rect;
     QFontMetricsF m_font_metrics;
     _Margin m_margin;
-
+    void f_GLPaintData();
+    void f_painterFrame(QPainter* painter);
 
 signals:
     void paintFPSUpdate(int fps);

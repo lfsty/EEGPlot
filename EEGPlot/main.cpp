@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 //    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Floor);
 //#endif
 
-    // 垂直同步
+//    垂直同步
 //    QSurfaceFormat format = QSurfaceFormat::defaultFormat();
 //    format.setSwapInterval(0);
 //    QSurfaceFormat::setDefaultFormat(format);
