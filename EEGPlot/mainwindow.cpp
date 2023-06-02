@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <QtMath>
 
 #define FREQ 1000
-#define CHNUM 8
-#define XRANGES 5
+#define CHNUM 64
+#define XRANGES 5.5
 #define YRANGE 20
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -22,6 +23,12 @@ MainWindow::MainWindow(QWidget* parent)
     });
 
     ui->m_widget_eegplot->initPaintData(DispMode::Cycle, XRANGES, CHNUM, FREQ, YRANGE);
+    QStringList _y_tickets;
+    for(int i = 0; i < CHNUM; i++)
+    {
+        _y_tickets.push_back(QString("ch%1").arg(i + 1));
+    }
+    ui->m_widget_eegplot->setChTickets(_y_tickets);
 
 
     {
@@ -41,7 +48,8 @@ MainWindow::MainWindow(QWidget* parent)
 
             for(int i = 0; i < CHNUM; i++)
             {
-                _tmp[i] = QRandomGenerator::global()->bounded(_range_y) - _range_y / 2;
+//                _tmp[i] = QRandomGenerator::global()->bounded(_range_y) - _range_y / 2;
+                _tmp[i] = YRANGE / 2 * qSin(2 * M_PI * i * double(_x) / FREQ);
             }
             emit sig_gen_data(_tmp, double(_x++) / FREQ);
         });

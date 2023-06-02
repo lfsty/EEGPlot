@@ -7,7 +7,7 @@
 #include <QOpenGLShaderProgram>
 #include <QPainter>
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 enum DispMode
 {
@@ -29,6 +29,7 @@ private:
         const double getChYData(const int& chIndex, const int& dataIndex) const;
         const double getChXData(const int& dataIndex) const;
         void AddData(const double* ydata, const double& xdata, const int& length);
+        const int getCurrentIndex() const;
     public:
         void setEEGDataShape(const int& ch_capacity, const int& ch_num, const DispMode& save_mode);
         const int getChCapacity() const;
@@ -63,6 +64,8 @@ public:
 private:
     void f_calFPS();
     void f_calAddDataFPS();
+    void f_updatePaintData();
+    const QString f_getXTicket(const int& tm_s) const;
 public:
     void setYRange(const double& y_range);
     void setChTickets(const QStringList& ch_tickets);
@@ -75,11 +78,22 @@ private:
     double m_yRange = 20;
     QStringList m_chTickets;
 private:
+    struct _Margin
+    {
+        double left = 0;
+        double top = 0;
+        double right = 0;
+        double bottom = 0;
+    };
     //绘图相关
     double m_phy_singleChHeight;
     double m_phy_chDataBias;
     double m_phy_dataRatio;
     double m_phy_xRatio;
+    QFont m_ticket_font;
+    QRectF m_paint_rect;
+    QFontMetricsF m_font_metrics;
+    _Margin m_margin;
 
 
 signals:
