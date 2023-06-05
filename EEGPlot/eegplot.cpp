@@ -15,14 +15,14 @@ EEGPlot::EEGPlot(QWidget* parent)
     m_margin.right = BASE_MARGIN;
     m_margin.left = BASE_MARGIN;
 
+
 }
 
 void EEGPlot::initializeGL()
 {
     //调用内容初始化函数
     initializeOpenGLFunctions();
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);  //设置窗体背景色
-
+//    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);  //设置窗体背景色
 }
 
 void EEGPlot::paintGL()
@@ -166,8 +166,8 @@ void EEGPlot::setChTickets(const QStringList& ch_tickets)
 
 void EEGPlot::f_GLPaintData()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(0.0, 0.0, 0.0);
     for(int i = 0; i < m_chNum; i++)
     {
@@ -204,13 +204,13 @@ void EEGPlot::f_painterFrame(QPainter* painter)
     // xtickets
     for(int i = 0; i < m_data.getSize() - 1; i++)
     {
-        int _ms = m_data.getChXData(i) * 1000;
-        if(_ms % 1000 == 0)
+        double _s = m_data.getChXData(i);
+        if(int(_s) - _s == 0.0)
         {
-            QString _tmp_x_ticket = f_getXTicket(_ms / 1000);
+            QString _tmp_x_ticket = f_getXTicket(_s);
             QRectF _tmp_ticket_rect = m_font_metrics.boundingRect(_tmp_x_ticket);
-            QRectF _paint_ticket_rect(i * m_phy_xRatio + m_paint_rect.left() - (_tmp_ticket_rect.width() / 2), m_paint_rect.bottom(), _tmp_ticket_rect.width(), _tmp_ticket_rect.height());
-            painter->drawText(_paint_ticket_rect, Qt::AlignHCenter | Qt::AlignVCenter, _tmp_x_ticket);
+            _tmp_ticket_rect.moveTo(i * m_phy_xRatio + m_paint_rect.left() - (_tmp_ticket_rect.width() / 2), m_paint_rect.bottom());
+            painter->drawText(_tmp_ticket_rect, Qt::AlignHCenter | Qt::AlignVCenter, _tmp_x_ticket);
         }
     }
 }

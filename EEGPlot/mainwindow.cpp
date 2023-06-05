@@ -3,7 +3,7 @@
 #include <QtMath>
 
 #define FREQ 1000
-#define CHNUM 128
+#define CHNUM 8
 #define XRANGES 5.5
 #define YRANGE 20
 MainWindow::MainWindow(QWidget* parent)
