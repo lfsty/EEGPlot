@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget* parent)
             for(int i = 0; i < CHNUM; i++)
             {
 //                _tmp[i] = QRandomGenerator::global()->bounded(_range_y) - _range_y / 2;
-                _tmp[i] = YRANGE / 2 * qSin(2 * M_PI * i * double(_x) / FREQ);
+                _tmp[i] = YRANGE / 2 * qSin(2 * M_PI * i * double(_x) / FREQ) * 2;
             }
             emit sig_gen_data(_tmp, double(_x++) / FREQ);
         });

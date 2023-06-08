@@ -175,7 +175,9 @@ void EEGPlot::f_GLPaintData()
         glBegin(GL_LINE_STRIP);//画线
         for(int j = 0; j < m_data.getSize(); j++)
         {
-            glVertex2d(j * m_phy_xRatio + m_paint_rect.left(), m_data.getChYData(i, j)*m_phy_dataRatio + m_phy_chDataBias + m_phy_singleChHeight * i + m_paint_rect.top());
+            float _y = m_data.getChYData(i, j) * m_phy_dataRatio + m_phy_chDataBias + m_phy_singleChHeight * i + m_paint_rect.top();
+            _y = _y < m_paint_rect.bottom() ? _y : m_paint_rect.bottom();
+            glVertex2d(j * m_phy_xRatio + m_paint_rect.left(), _y);
         }
         glEnd();
     }
